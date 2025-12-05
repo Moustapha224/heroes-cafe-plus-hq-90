@@ -70,7 +70,7 @@ const ContactSection = () => {
             <Card className="card-restaurant overflow-hidden">
               <CardContent className="p-0">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2624.9916256937595!2d2.3414677!3d48.8588443!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66e1f06e2b70f%3A0x40b82c3688c9460!2sParis%2C%20France!5e0!3m2!1sfr!2sfr!4v1699999999999!5m2!1sfr!2sfr"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d13912.349031469446!2d-13.6015468!3d9.59716855!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xf1cd5b1f533c77b%3A0x39b71a6593689bc5!2sMikhiforeya!5e1!3m2!1sfr!2s!4v1764947814588!5m2!1sfr!2s"
                   width="100%"
                   height="300"
                   style={{ border: 0 }}
