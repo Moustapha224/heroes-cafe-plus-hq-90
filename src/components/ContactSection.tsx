@@ -66,20 +66,20 @@ const ContactSection = () => {
               })}
             </div>
 
-            {/* Map Placeholder */}
-            <Card className="card-restaurant">
+            {/* Google Maps */}
+            <Card className="card-restaurant overflow-hidden">
               <CardContent className="p-0">
-                <div className="h-64 bg-gradient-to-br from-muted to-muted-foreground/20 rounded-lg flex items-center justify-center">
-                  <div className="text-center">
-                    <MapPin className="w-12 h-12 text-primary mx-auto mb-4" />
-                    <p className="text-muted-foreground">
-                      Carte interactive Google Maps
-                    </p>
-                    <p className="text-sm text-muted-foreground/80 mt-2">
-                      (Intégration disponible avec backend)
-                    </p>
-                  </div>
-                </div>
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2624.9916256937595!2d2.3414677!3d48.8588443!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e66e1f06e2b70f%3A0x40b82c3688c9460!2sParis%2C%20France!5e0!3m2!1sfr!2sfr!4v1699999999999!5m2!1sfr!2sfr"
+                  width="100%"
+                  height="300"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="rounded-lg"
+                  title="Localisation du restaurant Délices"
+                />
               </CardContent>
             </Card>
           </div>
