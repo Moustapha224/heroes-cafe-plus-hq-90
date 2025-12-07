@@ -1,4 +1,5 @@
 import { MapPin, Phone, Clock, Facebook, Instagram, Twitter } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -57,8 +58,8 @@ const Footer = () => {
               <a href="#menu" className="block text-sm hover:text-accent transition-colors">Menu</a>
               <a href="#gallery" className="block text-sm hover:text-accent transition-colors">Galerie</a>
               <a href="#contact" className="block text-sm hover:text-accent transition-colors">Contact</a>
+              <Link to="/admin/auth" className="block text-sm hover:text-accent transition-colors">Administration</Link>
               <a href="#" className="block text-sm hover:text-accent transition-colors">Mentions légales</a>
-              <a href="#" className="block text-sm hover:text-accent transition-colors">Politique de confidentialité</a>
             </div>
           </div>
 
