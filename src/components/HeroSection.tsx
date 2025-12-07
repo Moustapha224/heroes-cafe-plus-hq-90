@@ -1,4 +1,5 @@
 import { ChefHat, Clock, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import heroImage from '@/assets/hero-restaurant.jpg';
 
@@ -28,12 +29,15 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Button className="btn-hero text-lg px-8 py-4 hover-scale">
-              Voir notre menu
-            </Button>
+            <Link to="/menu">
+              <Button className="btn-hero text-lg px-8 py-4 hover-scale">
+                Commander en ligne
+              </Button>
+            </Link>
             <Button 
               variant="outline" 
               className="bg-white/10 border-white/30 text-white hover:bg-white/20 text-lg px-8 py-4 hover-scale backdrop-blur-sm"
+              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
             >
               Réserver une table
             </Button>
