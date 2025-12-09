@@ -169,7 +169,7 @@ const handler = async (req: Request): Promise<Response> => {
       },
       body: JSON.stringify({
         from: "Délices <onboarding@resend.dev>",
-        to: ["kitchen@restaurant.com"], // Replace with actual kitchen email
+        to: ["mssidiboss@gmail.com"],
         subject: `🔔 Nouvelle commande ${order.order_number} - ${orderTypeLabel}`,
         html: emailHtml,
       }),
