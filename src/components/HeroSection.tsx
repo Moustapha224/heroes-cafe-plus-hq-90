@@ -34,13 +34,14 @@ const HeroSection = () => {
                 Commander en ligne
               </Button>
             </Link>
-            <Button 
-              variant="outline" 
-              className="bg-white/10 border-white/30 text-white hover:bg-white/20 text-lg px-8 py-4 hover-scale backdrop-blur-sm"
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              Réserver une table
-            </Button>
+            <Link to="/#contact">
+              <Button 
+                variant="outline" 
+                className="bg-white/10 border-white/30 text-white hover:bg-white/20 text-lg px-8 py-4 hover-scale backdrop-blur-sm"
+              >
+                Réserver une table
+              </Button>
+            </Link>
           </div>
 
           {/* Stats */}

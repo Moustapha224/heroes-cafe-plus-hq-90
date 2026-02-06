@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Phone, User, FileText, Truck, Store } from 'lucide-react';
+import { ArrowLeft, Phone, User, FileText, Truck, Store } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -13,6 +13,7 @@ import { useCreateOrder } from '@/hooks/useOrders';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { OrderType, PaymentMethod } from '@/types/database';
+import LocationPicker from '@/components/checkout/LocationPicker';
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -218,18 +219,10 @@ const Checkout = () => {
 
               {formData.orderType === 'delivery' && (
                 <div className="mt-4">
-                  <Label htmlFor="customerAddress">Adresse de livraison *</Label>
-                  <div className="relative">
-                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Textarea
-                      id="customerAddress"
-                      value={formData.customerAddress}
-                      onChange={(e) => handleInputChange('customerAddress', e.target.value)}
-                      placeholder="Votre adresse complète"
-                      className="pl-10 min-h-[80px]"
-                      required
-                    />
-                  </div>
+                  <LocationPicker
+                    value={formData.customerAddress}
+                    onChange={(address) => handleInputChange('customerAddress', address)}
+                  />
                 </div>
               )}
             </CardContent>
