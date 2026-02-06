@@ -1,10 +1,28 @@
-import { MapPin, Phone, Clock, Mail } from 'lucide-react';
+import { useState } from 'react';
+import { MapPin, Phone, Clock, Mail, Loader2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+import { useCreateReservation } from '@/hooks/useReservations';
+import { supabase } from '@/integrations/supabase/client';
 
 const ContactSection = () => {
+  const { toast } = useToast();
+  const createReservation = useCreateReservation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    date: '',
+    time: '',
+    guests: '2',
+    message: '',
+  });
+
   const contactInfo = [
     {
       icon: MapPin,
@@ -28,6 +46,89 @@ const ContactSection = () => {
     }
   ];
 
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const validateForm = () => {
+    if (!formData.firstName.trim() || !formData.lastName.trim()) {
+      toast({ title: 'Erreur', description: 'Veuillez entrer votre nom complet', variant: 'destructive' });
+      return false;
+    }
+    if (!formData.email.trim() || !formData.email.includes('@')) {
+      toast({ title: 'Erreur', description: 'Veuillez entrer un email valide', variant: 'destructive' });
+      return false;
+    }
+    if (!formData.date) {
+      toast({ title: 'Erreur', description: 'Veuillez sélectionner une date', variant: 'destructive' });
+      return false;
+    }
+    if (!formData.time) {
+      toast({ title: 'Erreur', description: 'Veuillez sélectionner une heure', variant: 'destructive' });
+      return false;
+    }
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const reservationData = await createReservation.mutateAsync({
+        customer_name: `${formData.firstName} ${formData.lastName}`.trim(),
+        customer_email: formData.email.trim(),
+        customer_phone: formData.phone.trim() || null,
+        reservation_date: formData.date,
+        reservation_time: formData.time,
+        party_size: parseInt(formData.guests) || 2,
+        notes: formData.message.trim() || null,
+      });
+
+      // Send email to restaurant
+      try {
+        await supabase.functions.invoke('send-reservation-email', {
+          body: reservationData,
+        });
+      } catch (emailError) {
+        console.error('Failed to send reservation email:', emailError);
+      }
+
+      // Reset form
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        date: '',
+        time: '',
+        guests: '2',
+        message: '',
+      });
+
+      toast({
+        title: 'Réservation confirmée!',
+        description: `Votre réservation ${reservationData.reservation_number} a été enregistrée. Vous recevrez une confirmation par email.`,
+      });
+    } catch (error) {
+      console.error('Reservation error:', error);
+      toast({
+        title: 'Erreur',
+        description: 'Impossible de créer la réservation. Veuillez réessayer.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleWhatsAppClick = () => {
+    const message = encodeURIComponent('Bonjour, je souhaite faire une réservation au restaurant Délices.');
+    window.open(`https://wa.me/33678901234?text=${message}`, '_blank');
+  };
+
   return (
     <section id="contact" className="py-20 bg-muted/30">
       <div className="container mx-auto px-4">
@@ -44,7 +145,7 @@ const ContactSection = () => {
           {/* Contact Information */}
           <div className="space-y-6 slide-up">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {contactInfo.map((info, index) => {
+              {contactInfo.map((info) => {
                 const Icon = info.icon;
                 return (
                   <Card key={info.title} className="card-restaurant hover-scale">
@@ -90,43 +191,81 @@ const ContactSection = () => {
               <h3 className="text-2xl font-heading font-bold mb-6 text-center">
                 Formulaire de Réservation
               </h3>
-              <form className="space-y-6">
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-2">Nom *</label>
-                    <Input placeholder="Votre nom" />
+                    <Input 
+                      placeholder="Votre nom"
+                      value={formData.lastName}
+                      onChange={(e) => handleInputChange('lastName', e.target.value)}
+                      required
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">Prénom *</label>
-                    <Input placeholder="Votre prénom" />
+                    <Input 
+                      placeholder="Votre prénom"
+                      value={formData.firstName}
+                      onChange={(e) => handleInputChange('firstName', e.target.value)}
+                      required
+                    />
                   </div>
                 </div>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-2">Email *</label>
-                    <Input type="email" placeholder="votre@email.com" />
+                    <Input 
+                      type="email" 
+                      placeholder="votre@email.com"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      required
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">Téléphone</label>
-                    <Input placeholder="+33 1 23 45 67 89" />
+                    <Input 
+                      placeholder="+33 1 23 45 67 89"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                    />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium mb-2">Date *</label>
-                    <Input type="date" />
+                    <Input 
+                      type="date"
+                      value={formData.date}
+                      onChange={(e) => handleInputChange('date', e.target.value)}
+                      min={new Date().toISOString().split('T')[0]}
+                      required
+                    />
                   </div>
                   <div>
                     <label className="block text-sm font-medium mb-2">Heure *</label>
-                    <Input type="time" />
+                    <Input 
+                      type="time"
+                      value={formData.time}
+                      onChange={(e) => handleInputChange('time', e.target.value)}
+                      required
+                    />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium mb-2">Nombre de personnes *</label>
-                  <Input type="number" min="1" max="20" placeholder="2" />
+                  <Input 
+                    type="number" 
+                    min="1" 
+                    max="20" 
+                    value={formData.guests}
+                    onChange={(e) => handleInputChange('guests', e.target.value)}
+                    required
+                  />
                 </div>
 
                 <div>
@@ -134,11 +273,24 @@ const ContactSection = () => {
                   <Textarea 
                     placeholder="Demandes spéciales, allergies, préférences..."
                     className="min-h-[100px]"
+                    value={formData.message}
+                    onChange={(e) => handleInputChange('message', e.target.value)}
                   />
                 </div>
 
-                <Button className="btn-hero w-full text-lg">
-                  Réserver maintenant
+                <Button 
+                  type="submit" 
+                  className="btn-hero w-full text-lg"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Réservation en cours...
+                    </>
+                  ) : (
+                    'Réserver maintenant'
+                  )}
                 </Button>
               </form>
 
@@ -146,7 +298,7 @@ const ContactSection = () => {
                 <p className="text-muted-foreground text-sm mb-4">
                   Ou contactez-nous directement via WhatsApp
                 </p>
-                <Button className="btn-accent">
+                <Button className="btn-accent" onClick={handleWhatsAppClick}>
                   <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.885 3.087z"/>
                   </svg>

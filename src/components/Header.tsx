@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -35,7 +36,9 @@ const Header = () => {
                 {item.label}
               </a>
             ))}
-            <Button className="btn-hero">Commander</Button>
+            <Link to="/menu">
+              <Button className="btn-hero">Commander</Button>
+            </Link>
           </nav>
 
           {/* Mobile Menu Button */}
@@ -61,7 +64,9 @@ const Header = () => {
                   {item.label}
                 </a>
               ))}
-              <Button className="btn-hero w-full">Commander</Button>
+              <Link to="/menu">
+                <Button className="btn-hero w-full">Commander</Button>
+              </Link>
             </div>
           </nav>
         )}

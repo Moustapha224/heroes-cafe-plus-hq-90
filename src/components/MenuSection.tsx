@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import burgerImage from '@/assets/burger-hero.jpg';
@@ -82,18 +83,22 @@ const MenuSection = () => {
                     </div>
                   ))}
                 </div>
-                <Button className="btn-secondary w-full mt-6">
-                  Commander cette catégorie
-                </Button>
+                <Link to="/menu">
+                  <Button className="btn-secondary w-full mt-6">
+                    Commander cette catégorie
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           ))}
         </div>
 
         <div className="text-center mt-12">
-          <Button className="btn-hero text-lg px-8 py-4">
-            Voir le menu complet
-          </Button>
+          <Link to="/menu">
+            <Button className="btn-hero text-lg px-8 py-4">
+              Voir le menu complet
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
