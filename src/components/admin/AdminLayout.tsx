@@ -6,6 +6,7 @@ import {
   LayoutDashboard, 
   Package, 
   ShoppingCart, 
+  CalendarDays,
   LogOut, 
   ChefHat,
   Home,
@@ -48,6 +49,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     { path: '/admin', icon: LayoutDashboard, label: 'Tableau de bord' },
     { path: '/admin/products', icon: Package, label: 'Produits' },
     { path: '/admin/orders', icon: ShoppingCart, label: 'Commandes' },
+    { path: '/admin/reservations', icon: CalendarDays, label: 'Réservations' },
   ];
 
   return (
